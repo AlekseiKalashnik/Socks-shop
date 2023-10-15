@@ -5,10 +5,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "sock")
+@Table(name = "socks")
 @NoArgsConstructor
 @Setter
 @Getter
@@ -21,25 +19,17 @@ public class Sock {
     private int id;
 
     @Column(name = "color")
-    @Enumerated(EnumType.STRING)
-    private SockColors color;
+    private String color;
 
-    @Column(name = "cottonPart")
-    @Min(value = 0, message = "")
-    @Max(value = 100, message = "")
-    private int cottonPart;
+    @Column(name = "cotton_part")
+    @Min(value = 0, message = "Can't be less than 0")
+    @Max(value = 100, message = "Can't be greater than 100")
+    private Integer cottonPart;
 
     @Column(name = "quantity")
-    @Min(value = 0, message = "")
-    private int quantity;
+    private Integer quantity;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    public Sock(SockColors color, int cottonPart, int quantity) {
+    public Sock(String color, int cottonPart, int quantity) {
         this.color = color;
         this.cottonPart = cottonPart;
         this.quantity = quantity;

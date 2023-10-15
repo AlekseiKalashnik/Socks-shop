@@ -1,34 +1,45 @@
 package ru.raiffeisen.dgtl.Shop.controller;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.raiffeisen.dgtl.Shop.dto.SockDto;
 import ru.raiffeisen.dgtl.Shop.entity.Sock;
 import ru.raiffeisen.dgtl.Shop.service.SockService;
 
-import java.util.List;
-
-@RestController(value = "/api/socks")
+@RestController
+@RequestMapping(value = "/api/socks")
 public class SockController {
 
-    SockService service;
+    private final SockService sockService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public SockController(SockService service) {
-        this.service = service;
+    public SockController(SockService sockService, ModelMapper modelMapper) {
+        this.sockService = sockService;
+        this.modelMapper = modelMapper;
     }
 
-    @GetMapping()
-    public List<Sock> getSocks() {
-        return service.getSocks();
+    @GetMapping
+    public Integer getSocks(@RequestParam String color, @RequestParam String operation, @RequestParam Integer cottonPart) {
+        return sockService.getAllSocks(color, operation, cottonPart);
     }
 
-    @GetMapping(value = "/{id}")
-    public Sock getSockById(@PathVariable("id") Integer id) {
-        return service.getSockById(id);
+    @PostMapping("/income")
+    public void income(@RequestBody SockDto sockDto) {
+        sockService.addIncome(convertToSock(sockDto));
     }
 
+    @PostMapping("/outcome")
+    public void outcome(@RequestBody SockDto sockDto) {
+        sockService.addOutcome(convertToSock(sockDto));
+    }
+
+    private Sock convertToSock(SockDto sockDto) {
+        return modelMapper.map(sockDto, Sock.class);
+    }
+
+    private SockDto convertToSockDTO(Sock sock) {
+        return modelMapper.map(sock, SockDto.class);
+    }
 }
